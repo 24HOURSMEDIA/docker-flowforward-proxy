@@ -6,12 +6,13 @@ PROJECT_DIR="${PROJECT_DIR:-$(realpath "$ME_DIR/..")}"
 
 # key of nginx versions is the version as in the nginx repository,
 # value is the version to include in the tag of the deployment
+# Please respect ascending order of importance, last build will appear top of the list.
 declare -A nginx_versions
 nginx_versions=(
-  ["1.25.3-alpine3.18-slim"]="1.25-alpine3.18-slim"
-  ["1.25.3-alpine3.18"]="1.25-alpine3.18"
   ["1.21.6-alpine"]="1.21.6-alpine3.15"
-  ["nginx:1.23.1-alpine"]="nginx:1.23.1-alpine3.16"
+  ["1.23.1-alpine"]="1.23.1-alpine3.16"
+  ["1.25.3-alpine3.18"]="1.25-alpine3.18"
+  ["1.25.3-alpine3.18-slim"]="1.25-alpine3.18-slim"
 )
 
 echo 
