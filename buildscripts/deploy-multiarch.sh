@@ -6,13 +6,21 @@ PROJECT_DIR="${PROJECT_DIR:-$(realpath "$ME_DIR/..")}"
 
 # key of nginx versions is the version as in the nginx repository,
 # value is the version to include in the tag of the deployment
-# Please respect ascending order of importance, last build will appear top of the list.
+# Please respect descending order of importance, most important
+# build will appear top of the list in most registries..
 declare -A nginx_versions
 nginx_versions=(
-  ["1.21.6-alpine"]="1.21.6-alpine3.15"
-  ["1.23.1-alpine"]="1.23.1-alpine3.16"
-  ["1.25.3-alpine3.18"]="1.25-alpine3.18"
-  ["1.25.3-alpine3.18-slim"]="1.25-alpine3.18-slim"
+  "1.21.6-alpine" "1.21.6-alpine3.15"
+  "1.23.1-alpine" "1.23.1-alpine3.16"
+  "1.25.3-alpine3.18" "1.25-alpine3.18"
+  "1.25.3-alpine3.18-slim" "1.25-alpine3.18-slim"
+)
+
+nginx_versions_order=(
+  "1.21.6-alpine"
+  "1.23.1-alpine"
+  "1.25.3-alpine3.18"
+  "1.25.3-alpine3.18-slim"
 )
 
 echo 
@@ -36,8 +44,9 @@ done
 echo "Tagging repository. If this fails you should choose another tag or remove the tag ${version}"
 git tag "$version"
 
-for nginx_version nginx_alias in ${(kv)nginx_versions}; do
+for nginx_version in "${nginx_versions_order[@]}"; do
   (
+      nginx_alias=${nginx_versions[$key]}
       cd "$PROJECT_DIR"
       export NGINX_VERSION="$nginx_version"
       export NGINX_VERSION_ALIAS="$nginx_alias"
