@@ -1,0 +1,7 @@
+
+log_format upstreamlog '$remote_addr [$time_local] :$server_port "$request" '
+    '$status '
+    'to: "$upstream_addr" "$request" $status '
+    '$request_length $bytes_sent $request_time $upstream_response_time'
+    ' [$connection:$connection_requests]'
+;

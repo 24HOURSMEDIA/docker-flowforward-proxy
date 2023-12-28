@@ -1,0 +1,96 @@
+{% macro configure_from_preset(handle) %}
+    {# configure proxy for file uploads with a preset #}
+    {# possible values: default, tiny, small, medium, large, xlarge, xxlarge, gigas, unlimited #}
+    {% set handled = false %}
+    {% set handle = handle | default("default") %}
+    # {{ handle }} file uploads
+   
+    {% if handle == "default" %}
+    {% set handled = true %}
+    # (nginx default)
+    client_body_timeout   60;
+    proxy_send_timeout    60;
+    proxy_connect_timeout 60;
+    {% endif %}
+
+    {% if handle == "tiny" %}
+    {% set handled = true %}
+    client_body_timeout   30;
+    proxy_send_timeout    30;
+    proxy_connect_timeout 30;
+    client_max_body_size  256K;
+    {% endif %}        
+    
+    {% if handle == "small" %}
+    {% set handled = true %}
+    client_body_timeout   60;
+    proxy_send_timeout    60;
+    proxy_connect_timeout 60;
+    client_max_body_size  2M;
+    {% endif %}
+
+    {% if handle == "medium" %}
+    {% set handled = true %}
+    client_body_timeout   120;
+    proxy_send_timeout    120;
+    proxy_connect_timeout 60;
+    client_max_body_size  16M;
+    proxy_request_buffering off;
+    {% endif %}       
+
+    {% if handle == "large" %}
+    {% set handled = true %}
+    client_body_timeout   300;
+    proxy_send_timeout    300;
+    proxy_connect_timeout 60;
+    client_max_body_size  128M;
+    client_body_buffer_size 128k;
+    proxy_request_buffering off;
+    {% endif %}
+    
+    {% if handle == "xlarge" %}
+    {% set handled = true %}
+    client_body_timeout   600;
+    proxy_send_timeout    600;
+    proxy_connect_timeout 60;
+    client_max_body_size  256M;
+    client_body_buffer_size 128k;
+    proxy_request_buffering off;
+    {% endif %}
+
+    {% if handle == "xxlarge" %}
+    {% set handled = true %}
+    client_body_timeout   1200;
+    proxy_send_timeout    1200;
+    proxy_connect_timeout 60;
+    client_max_body_size  512M;
+    client_body_buffer_size 128k;
+    proxy_request_buffering off;
+    {% endif %}
+
+    {% if handle == "gigas" %}
+    {% set handled = true %}
+    client_body_timeout   2400;
+    proxy_send_timeout    2400;
+    proxy_connect_timeout 300;
+    client_max_body_size  2048M;
+    client_body_buffer_size 256k;
+    proxy_request_buffering off;
+    {% endif %}
+
+    {% if handle == "unlimited" %}
+    {% set handled = true %}
+    client_body_timeout   3600;
+    proxy_send_timeout    3600;
+    proxy_connect_timeout 300;
+    client_max_body_size  0;
+    client_body_buffer_size 512k;
+    proxy_request_buffering off;
+    {% endif %}
+
+    {% if not handled %}
+    {% set msg = "[CRITICAL] undefined upload preset handle " ~ handle %}
+    {{ msg | fatality }}
+    {% endif %}
+    {% endmacro %}
+    

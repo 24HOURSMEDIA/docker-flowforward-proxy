@@ -1,0 +1,13 @@
+{% extends "_layout/tidy.twig" %}
+
+{% block content %}
+{% set protocol_ports = {"http": "80", "https": "443"} %}
+{% set port = proxy_config.backend_port | default(protocol_ports[proxy_config.backend_protocol]) %}
+{% set keepalive = KEEPALIVE_CONNS %}
+upstream {{ proxy_config.upstream_name }} {
+    server {{ proxy_config.backend }}:{{ port }};
+    {% if keepalive | length > 0 %}
+    keepalive {{ keepalive }};
+    {% endif %}
+}
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "_layout/layout.twig" %}
+
+{% block content %}
+
+{% set mapping = {
+    "backend":"PROXY_BACKEND",
+    "backend_port": "PROXY_BACKEND_PORT",
+    "backend_protocol": "PROXY_BACKEND_PROTOCOL",
+    "proxy_port":"PROXY_PORT",
+    "upload_preset":"PROXY_UPLOAD_PRESET",
+    "proxy_name": "PROXY_NAME"
+    }
+%}
+{% set raw_configs = mapping | extract_objects(10, "PROXY_BACKEND") %}
+{% set configs = [] %}
+{% for config in raw_configs %}
+    {# defaults #}
+    {% set overwrite = {
+        proxy_name: config.proxy_name | default("proxy" ~ loop.index),
+        upstream_name: "proxy" ~ loop.index ~ "_backend",
+        backend_protocol: config.backend_protocol | default("https"),
+        upload_preset: config.upload_preset | default("medium")
+    }
+    %}
+    {% set config = config | merge(overwrite) %}
+    {% set configs = configs | merge([config]) %}
+{% endfor %}
+
+{% for proxy_config in configs %}
+    {% include "_partials/upstream.twig" with {proxy_config: proxy_config} %}
+{% endfor %}
+
+{% for proxy_config in configs %}
+{% include "_partials/server.twig" with {proxy_config: proxy_config} %}
+{% endfor %}
+
+{% endblock %}

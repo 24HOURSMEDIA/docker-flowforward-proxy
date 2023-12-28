@@ -1,0 +1,24 @@
+version: '3.7'
+
+services:
+
+  forward_proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NGINX_IMAGE: ${NGINX_IMAGE:-nginx:1.25-alpine3.18-slim}
+    volumes:
+      - ./files/config-templates:/config-templates
+    env_file:
+      - ./example_env.env
+    ports:
+      - "4000:4000"
+      - "4001:4001"
+      - "4002:4002"
+
+  origin1:
+    image: nginx:1.25.3-alpine3.18-slim
+    
+  origin2:
+    image: nginx:1.25.3-alpine3.18-slim
