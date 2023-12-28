@@ -18,24 +18,40 @@ check_env() {
 }
 
 check_env "NGINX_VERSION"
+check_env "NGINX_VERSION_ALIAS"
 check_env "VERSION"
 check_env "REPOSITORY_URI"
 check_env "NAME"
+
+if ! [[ ${VERSION} =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo "Incorrect version format. Exiting..."
+    exit 1
+fi
+# Split the version into parts
+MAJOR=$(echo "$VERSION" | cut -d. -f1)
+MINOR=$(echo "$VERSION" | cut -d. -f2)
+PATCH=$(echo "$VERSION" | cut -d. -f3)
+
+
 
 (
   cd ${PROJECT_DIR}
 
   # Set the desired image name and tag
-  AUTO_IMAGE_TAG=${VERSION}-nginx${NGINX_VERSION}
-  IMAGE_TAG=${IMAGE_TAG:-"${AUTO_IMAGE_TAG}"}
-
+  IMAGE_TAG1=${MAJOR}-nginx${NGINX_VERSION_ALIAS}
+  IMAGE_TAG2=${MAJOR}.${MINOR}-nginx${NGINX_VERSION_ALIAS}
+  IMAGE_TAG3=${MAJOR}.${MINOR}.${PATCH}-nginx${NGINX_VERSION_ALIAS}
 
   echo
   echo "Target for build:"
-  echo "$REPOSITORY_URI:$IMAGE_TAG"
+  echo "$REPOSITORY_URI:$IMAGE_TAG1"
+  echo "$REPOSITORY_URI:$IMAGE_TAG2"
+  echo "$REPOSITORY_URI:$IMAGE_TAG3"
   echo
-  echo "Please verify the settings above. The image will be built and pushed to the target."
 
+  echo "interaction $INTERACTION"
+  if [ "$INTERACTION" != "none" ]; then
+    echo "Please verify the settings above. The image will be built and pushed to the target."
     read -p "Start build. Continue? [y/N] " -n 1 -r
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
         echo
@@ -43,6 +59,7 @@ check_env "NAME"
         exit 1
     fi
     echo ""
+  fi
 
   BUILDER_NAME=$NAME
 
@@ -60,11 +77,18 @@ check_env "NAME"
 
   # Build and push the image for multiple architectures
   docker buildx build --platform "linux/amd64,linux/arm64/v8,linux/arm/v7" \
-      -t $REPOSITORY_URI:$IMAGE_TAG \
-      --build-arg NGINX_IMAGE=nginx:${NGINX_VERSION} \
+      --tag "$REPOSITORY_URI:$IMAGE_TAG1" \
+      --tag "$REPOSITORY_URI:$IMAGE_TAG2" \
+      --tag "$REPOSITORY_URI:$IMAGE_TAG3" \
+      --build-arg "NGINX_IMAGE=nginx:${NGINX_VERSION}" \
       --push \
       .
 
   # Clean up the builder instance
   docker buildx rm ${BUILDER_NAME}
 )
+
+echo
+echo "Finished, do not forget to push the repository with"
+echo "git push --tags"
+echo
