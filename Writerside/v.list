@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE vars SYSTEM "https://resources.jetbrains.com/writerside/1.0/vars.dtd">
+<vars>
+    <var name="product" value="FlowForward Proxy"/>
+
+    <var name="github_url" value="https://github.com/24HOURSMEDIA/docker-flowforward-proxy" />
+    <var name="documentation_url" value="https://24hoursmedia.github.io/docker-flowforward-proxy" />
+    <var name="issues_url" value="https://github.com/24HOURSMEDIA/docker-flowforward-proxy/issues" />
+    <var name="dockerhub_url" value="https://hub.docker.com/repository/docker/24hoursmedia/flowforward-proxy/general" />
+</vars>

@@ -76,7 +76,7 @@ PATCH=$(echo "$VERSION" | cut -d. -f3)
   docker buildx inspect ${BUILDER_NAME} --bootstrap
 
   # Build and push the image for multiple architectures
-  docker buildx build --platform "linux/amd64,linux/arm64/v8,linux/arm/v7" \
+  docker buildx build --platform "linux/amd64,linux/arm64/v8,linux/arm/v7,linux/arm/v6" \
       --tag "$REPOSITORY_URI:$IMAGE_TAG1" \
       --tag "$REPOSITORY_URI:$IMAGE_TAG2" \
       --tag "$REPOSITORY_URI:$IMAGE_TAG3" \

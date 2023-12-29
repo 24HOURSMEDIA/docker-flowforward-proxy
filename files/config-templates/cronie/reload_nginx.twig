@@ -2,7 +2,7 @@ SHELL=/bin/sh
 PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin
 MAILTO=
 
-{% set interval = "RELOAD_NGINX_INTERVAL" | value(53) %}
+{% set interval = "RELOAD_INTERVAL" | value(53) %}
 {% if interval | boolify %}
 */{{ interval }} * * * * root nginx -s reload 2>&1 > /tmp/reload_nginx_log
 {% endif %}

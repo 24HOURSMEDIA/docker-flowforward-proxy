@@ -10,10 +10,10 @@ PROJECT_DIR="${PROJECT_DIR:-$(realpath "$ME_DIR/..")}"
 # build will appear top of the list in most registries..
 declare -A nginx_versions
 nginx_versions=(
-  "1.21.6-alpine" "1.21.6-alpine3.15"
-  "1.23.1-alpine" "1.23.1-alpine3.16"
-  "1.25.3-alpine3.18" "1.25-alpine3.18"
-  "1.25.3-alpine3.18-slim" "1.25-alpine3.18-slim"
+  ["1.21.6-alpine"]="1.21.6-alpine3.15"
+  ["1.23.1-alpine"]="1.23.1-alpine3.16"
+  ["1.25.3-alpine3.18"]="1.25-alpine3.18"
+  ["1.25.3-alpine3.18-slim"]="1.25-alpine3.18-slim"
 )
 
 nginx_versions_order=(
@@ -46,7 +46,7 @@ git tag "$version"
 
 for nginx_version in "${nginx_versions_order[@]}"; do
   (
-      nginx_alias=${nginx_versions[$key]}
+      nginx_alias=${nginx_versions[$nginx_version]}
       cd "$PROJECT_DIR"
       export NGINX_VERSION="$nginx_version"
       export NGINX_VERSION_ALIAS="$nginx_alias"
